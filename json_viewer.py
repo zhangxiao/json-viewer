@@ -1,6 +1,7 @@
+# -*- coding:utf-8 -*-
 #!/usr/bin/env python3
 
-__author__ = "Ashwin Nanjappa"
+
 
 # GUI viewer to view JSON data as tree.
 # Ubuntu packages needed:
@@ -16,6 +17,8 @@ import sys
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QFileDialog, QAction
+from PyQt5.QtGui import QIcon
 
 class TextToTreeItem:
 
@@ -154,12 +157,28 @@ class JsonViewer(QtWidgets.QMainWindow):
     def __init__(self):
         super(JsonViewer, self).__init__()
 
-        fpath = sys.argv[1]
-        json_view = JsonView(fpath)
 
-        self.setCentralWidget(json_view)
         self.setWindowTitle("JSON Viewer")
-        self.show()
+
+        openaction = QAction(QIcon('open.png'), '&Open', self)
+        openaction.triggered.connect(self.msg)
+        # 创建菜单栏
+        menubar = self.menuBar()
+        # 添加菜单
+        FileMenu = menubar.addMenu('&File')
+        FileMenu.addAction(openaction)
+
+        # self.show()
+        self.showMaximized()
+
+    def msg(self):
+        fileName1, filetype = QFileDialog.getOpenFileName(self, "选取文件", "C:/",
+                                                          "All Files (*);;Text Files (*.txt)")  # 设置文件扩展名过滤,注意用双分号间隔
+        print(fileName1, filetype)
+        # fpath = sys.argv[1]
+        # fpath = 'merged.json'
+        json_view = JsonView(fileName1)
+        self.setCentralWidget(json_view)
 
     def keyPressEvent(self, e):
         if e.key() == QtCore.Qt.Key_Escape:
